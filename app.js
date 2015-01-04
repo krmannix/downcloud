@@ -4,19 +4,13 @@ var fs = require('fs');
 var request = require('request');
 var chalk = require('chalk');
 var Promise = require('bluebird');
-var client = require('./client_id');
 
 /* SET UP USER INPUT */
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
 
-/* GLOBAL VARIABLES */
-var client_key = client.client_key;
-var clienthost = "https://api.soundcloud.com";
-var limit = 10;
-var user;
-var stdout = process.stdout;
-var stdin = process.stdin;
+/* OTHER FILE IMPORTS */
+var Search= require('./search');
 
 /* UTILITY FUNCTIONS */
 var grabInput = function(num_inputs, values, callback) {
@@ -36,10 +30,8 @@ var exitProcess = function(reason) {
 }
 
 /* START OF PROCESS */
-stdout.write("Search for a SoundCloud user: ");
-stdin.once('data', function(data) {
-	searchRequest(data, 0);
-});
+Search.startSearch();
+
 
 /* REQUESTS */
 var searchRequest = function(user, offset) {

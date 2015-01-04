@@ -19,3 +19,10 @@ Download people's SoundCloud playlists via the terminal (__Work in progress__)
 * ~~Convert all to 1 host~~
 * Convert everything to use request dependency
 * Allow user to cycle through options
+
+
+State tree:
+
+Search for a user -> Choose a user
+				  -> Scroll to next 10 users
+				  -> Search for a different user
