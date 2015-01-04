@@ -8,13 +8,25 @@ process.stdin.setEncoding('utf8');
 
 /* GLOBAL VARIABLES */
 var client_key = client.client_key;
-var host = "https://api-v2.soundcloud.com";
+var searchhost = "https://api-v2.soundcloud.com";
+var clienthost = "https://api.soundcloud.com";
 var limit = 10;
 var user;
 var stdout = process.stdout;
 var stdin = process.stdin;
 
-console.log(client_key);
+/* UTILITY FUNCTIONS */
+var grabInput = function(inputs, values, callback) {
+	stdin.once('data', function(data) {
+		if (!isNaN(data.trim()) && parseInt(data.trim(), 10) < 10) {
+			callback(values, parseInt(data.trim(), 10));
+		} else {
+			console.log("data is " + data.trim() + "." + (parseInt(data.trim(), 10) === 8));
+			stdout.write("Not a valid input. Please enter a valid input: ");
+			grabInput(inputs, callback);
+		}
+	});
+}
 
 /* START OF PROCESS */
 /* Check for user input */
@@ -28,12 +40,12 @@ console.log(client_key);
 
 stdout.write("Search for a SoundCloud user: ");
 stdin.once('data', function(data) {
-	searchRequest(data);
+	searchRequest(data, 0);
 });
 
 /* REQUESTS */
-var searchRequest = function(user) {
-	https.get(host + "/search/users?q=" + user + "&limit=" + limit, function(response) {
+var searchRequest = function(user, offset) {
+	https.get(searchhost + "/search/users?q=" + user + "&limit=" + limit, function(response) {
 		var body = "";
 		response.on("data", function(chunk) {
 			body += chunk;
@@ -53,16 +65,45 @@ var searchRequest = function(user) {
 
 var chooseSearchResultRequest = function(body) {
 	var json = JSON.parse(body);
-	var nextURL = json.next_href;
 	var collection = json.collection;
 	var users = [];
-	// process.exit();
+	//var inputs = ['n'];
+	var inputs = [];
 	for (var i = 0; i < collection.length; i++) {
-		users.push({username: collection[i].username, id: collection[i].id});
+		users.push({username: collection[i].username, id: collection[i].id, uri: collection[i].uri});
 		console.log(i + ": " + collection[i].username);
+		inputs.push(i);
 	}
-	console.log(users[0].id);
-	stdout.write("Enter [0-" + collection.length + "] to select a user or n for next 10 users: ");
+	stdout.write("Enter [0-" + collection.length + "] to select a user: ");
+	grabInput(inputs, users, artistSearchRequest);
+}
+
+var artistSearchRequest = function(artists, artistIndex) {
+	var artist = artists[artistIndex];
+	https.get(artist.uri + "/playlists?client_id=" + client_key, function(response) {
+		var body = "";
+		response.on("data", function(chunk) {
+			body += chunk;
+		});
+		response.on("error", function(e) {
+			console.log("HTTP Error: " + e.message);
+		});
+		response.on("end", function() {
+			if (response.statusCode == 200) {
+				choosePlaylistResultRequest(body);
+			} else {
+				console.log("HTTP Error: " + response.statusCode);
+			}
+		});
+	});
+}
+
+var choosePlaylistResultRequest = function(body) {
+	console.log("Playlist Result");
+	var json = JSON.parse(body);
+	for (var i = 0; i < json.length; i++) {
+		console.log(i + ": " + json[i].title);
+	}
 }
 
 
