@@ -1,5 +1,6 @@
 var request = require('request');
 var constants = require('./constants');
+var Artist = require('./artist');
 var limit = constants.limit;
 var client_key = constants.client_key;
 var stdout = constants.stdout;
@@ -19,13 +20,15 @@ var searchInput = function() {
 
 var searchRequest = function(_user) {
 	user = _user;
-	request(clienthost + "/users?q=" + user + "&offset=" + offset + "&client_id=" + client_key, function(error, response, body) {
-		if (!error && response.statusCode == 200) {
-			chooseSearchResultRequest(body);
-		} else {
-			console.log("HTTP Error: " + error.message);
+	request(clienthost + "/users?limit=" + constants.limit + "&q=" + user + "&offset=" + offset + "&client_id=" + client_key, 
+		function(error, response, body) {
+			if (!error && response.statusCode == 200) {
+				chooseSearchResultRequest(body);
+			} else {
+				console.log("HTTP Error: " + error.message);
+			}
 		}
-	});
+	);
 }
 
 var getSearchUsersData = function(collection) {
@@ -73,9 +76,9 @@ var chooseSearchResultInput = function(users, hasMoreThan10) {
 			// Add 10 to offset and show next ten guys
 			offset += 10;
 			searchRequest(user);
-		} else if (!isNaN(data) && parseInt(data, 10) < 10) {
+		} else if (!isNaN(data) && data.indexOf('.') < 0 && parseInt(data, 10) < 10) {
 			// Choose an artist, and go into the artist part
-			console.log("This will launch into the artist part");
+			Artist.artistSearch(users[parseInt(data, 10)]);
 		} else {
 			// Invalid input, re-enter this function
 			console.log("That is not a valid input.");

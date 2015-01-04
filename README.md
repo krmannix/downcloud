@@ -23,6 +23,12 @@ Download people's SoundCloud playlists via the terminal (__Work in progress__)
 
 State tree:
 
+_Search.js_
 Search for a user -> Choose a user
 				  -> Scroll to next 10 users
 				  -> Search for a different user
+
+_Artist.js_
+(For now, we won't specify folders, they'll just download to the same spot)
+At a User -> Download one playlist -> Back to all User's playlist screen 	
+	 	  -> Download all playlists -> Back to search screen 

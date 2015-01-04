@@ -33,71 +33,9 @@ var exitProcess = function(reason) {
 Search.startSearch();
 
 
-/* REQUESTS */
-var searchRequest = function(user, offset) {
-	https.get(clienthost + "/users?q=" + user + "&limit=" + limit + "&client_id=" + client_key, function(response) {
-		var body = "";
-		response.on("data", function(chunk) {
-			body += chunk;
-		});
-		response.on("end", function() {
-			if (response.statusCode == 200) {
-				chooseSearchResultRequest(body);
-			} else {
-				console.log("HTTP Error: " + response.statusCode);
-			}
-		});
-		response.on("error", function(e) {
-			console.log("HTTP Error: " + e.message);
-		});
-	});
-}
 
-var chooseSearchResultRequest = function(body) {
-	var collection = JSON.parse(body);
-	var users = [];
-	for (var i = 0; i < collection.length; i++) {
-		users.push({username: collection[i].username, id: collection[i].id, uri: collection[i].uri});
-		console.log(i + ": " + collection[i].username);
-	}
-	stdout.write("Enter [0-" + collection.length + "] to select a user: ");
-	grabInput(collection.length, users, artistSearchRequest);
-}
 
-var artistSearchRequest = function(artists, artistIndex) {
-	var artist = artists[artistIndex];
-	https.get(artist.uri + "/playlists?client_id=" + client_key, function(response) {
-		var body = "";
-		response.on("data", function(chunk) {
-			body += chunk;
-		});
-		response.on("error", function(e) {
-			console.log("HTTP Error: " + e.message);
-		});
-		response.on("end", function() {
-			if (response.statusCode == 200) {
-				choosePlaylistResultRequest(body);
-			} else {
-				console.log("HTTP Error: " + response.statusCode);
-			}
-		});
-	});
-}
 
-var choosePlaylistResultRequest = function(body) {
-	var json = JSON.parse(body);
-	var playlists = [];
-	// Exit if there are no playlists
-	if (json.length === 0) {
-		exitProcess("User has no playlists. Exiting.");
-	}
-	for (var i = 0; i < json.length; i++) {
-		console.log(i + ": " + json[i].title);
-		playlists.push({title: json[i].title, tracks: json[i].tracks, id: json[i].id})
-	}
-	stdout.write("Enter [0-" + json.length + "] to select a playlist to download: ");
-	grabInput(json.length, playlists, downloadPlaylistPrep);
-}
 
 var downloadTrackRequest = function(tracks, dest, url) {
 	var current_length = 0, total_length;
