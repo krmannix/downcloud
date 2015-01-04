@@ -1,0 +1,25 @@
+{
+  "name": "DownCloud",
+  "version": "0.0.5",
+  "dependencies" : {
+    "request" : "2.x.x"
+  },
+  "description": "Download SoundCloud playlists from your favorite users via the terminal",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/krmannix/downcloud.git"
+  },
+  "keywords": [
+    "soundcloud"
+  ],
+  "author": "K. Rodman Mannix",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/krmannix/downcloud/issues"
+  },
+  "homepage": "https://github.com/krmannix/downcloud"
+}

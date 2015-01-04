@@ -1,5 +1,7 @@
 /* MODULE IMPORTS */
 var https = require('https');
+var fs = require('fs');
+var request = require('request');
 var client = require('./client_id');
 
 /* SET UP USER INPUT */
@@ -101,11 +103,45 @@ var artistSearchRequest = function(artists, artistIndex) {
 
 var downloadPlaylistRequest = function(playlists, playlistIndex) {
 	var playlist = playlists[playlistIndex];
-	// console.log(playlist.tracks[0]);
-	for (var i = 0; i < playlist.tracks.length; i++) {
-		console.log(playlist.tracks[i].title + " " + playlist.tracks[i].downloadable);
+	//download(playlist.tracks[1].download_url, playlist.tracks[1].title.replace(/[^a-z0-9_\-]/gi, '_') + ".mp3", sayWereDone);
+	downloadTrackRequest(playlist.tracks);
+}
+
+// This is the toughest one by far. There will almost always be redirects, so we should grab those
+var downloadTrackRequest = function(tracks) {
+	if (tracks.length === 0) {
+		exitProcess("Tracks have finished downloading.");
+	} else {
+		// Download track and then call again after shifting track
+		if (tracks[0].downloadable) {
+			var dest = tracks[0].title.replace(/[^a-z0-9_\-]/gi, '_') + ".mp3", 
+				url = tracks[0].download_url + "?client_id=" + client_key,
+				file = fs.createWriteStream(dest),
+				current_length = 0,
+				total_length;
+			request
+				.get(url)
+				.on('data', function(data) {
+					current_length += data.length;
+					if (total_length) {
+						stdout.write("\r");
+						stdout.write((Math.round((current_length/total_length)*1000)/10).toFixed(1) + "% downloaded");
+					}
+				})
+				.on('response', function(response) {
+					total_length = response.headers['content-length'];
+				})
+				.pipe(file)
+				.on('close', function() {
+					stdout.write('\n');
+					tracks.shift();
+					downloadTrackRequest(tracks);
+				});	
+		} else {
+			tracks.shift();
+			downloadTrackRequest(tracks);
+		}
 	}
-	//console.log(playlist);
 }
 
 var choosePlaylistResultRequest = function(body) {
