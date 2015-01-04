@@ -2,6 +2,7 @@
 var https = require('https');
 var fs = require('fs');
 var request = require('request');
+var chalk = require('chalk');
 var client = require('./client_id');
 
 /* SET UP USER INPUT */
@@ -35,15 +36,6 @@ var exitProcess = function(reason) {
 }
 
 /* START OF PROCESS */
-/* Check for user input */
-// Do this later
-// var args = process.argv.slice(2);
-// if (arg_user.length > 0) {
-// 	user = args[0];
-// } else {
-
-// }
-
 stdout.write("Search for a SoundCloud user: ");
 stdin.once('data', function(data) {
 	searchRequest(data, 0);
@@ -101,49 +93,6 @@ var artistSearchRequest = function(artists, artistIndex) {
 	});
 }
 
-var downloadPlaylistRequest = function(playlists, playlistIndex) {
-	var playlist = playlists[playlistIndex];
-	//download(playlist.tracks[1].download_url, playlist.tracks[1].title.replace(/[^a-z0-9_\-]/gi, '_') + ".mp3", sayWereDone);
-	downloadTrackRequest(playlist.tracks);
-}
-
-// This is the toughest one by far. There will almost always be redirects, so we should grab those
-var downloadTrackRequest = function(tracks) {
-	if (tracks.length === 0) {
-		exitProcess("Tracks have finished downloading.");
-	} else {
-		// Download track and then call again after shifting track
-		if (tracks[0].downloadable) {
-			var dest = tracks[0].title.replace(/[^a-z0-9_\-]/gi, '_') + ".mp3", 
-				url = tracks[0].download_url + "?client_id=" + client_key,
-				file = fs.createWriteStream(dest),
-				current_length = 0,
-				total_length;
-			request
-				.get(url)
-				.on('data', function(data) {
-					current_length += data.length;
-					if (total_length) {
-						stdout.write("\r");
-						stdout.write((Math.round((current_length/total_length)*1000)/10).toFixed(1) + "% downloaded");
-					}
-				})
-				.on('response', function(response) {
-					total_length = response.headers['content-length'];
-				})
-				.pipe(file)
-				.on('close', function() {
-					stdout.write('\n');
-					tracks.shift();
-					downloadTrackRequest(tracks);
-				});	
-		} else {
-			tracks.shift();
-			downloadTrackRequest(tracks);
-		}
-	}
-}
-
 var choosePlaylistResultRequest = function(body) {
 	var json = JSON.parse(body);
 	var playlists = [];
@@ -156,7 +105,57 @@ var choosePlaylistResultRequest = function(body) {
 		playlists.push({title: json[i].title, tracks: json[i].tracks, id: json[i].id})
 	}
 	stdout.write("Enter [0-" + json.length + "] to select a playlist to download: ");
-	grabInput(json.length, playlists, downloadPlaylistRequest);
+	grabInput(json.length, playlists, downloadPlaylistPrep);
+}
+
+var downloadTrackRequest = function(tracks, dest, url) {
+	var current_length = 0, total_length;
+	request
+		.get(url)
+		.on('data', function(data) {
+			current_length += data.length;
+			if (total_length) {
+				stdout.write("\r");
+				stdout.write((Math.round((current_length/total_length)*1000)/10).toFixed(1) + "% downloaded");
+			}
+		})
+		.on('response', function(response) {
+			total_length = response.headers['content-length'];
+		})
+		.pipe(fs.createWriteStream(dest))
+		.on('close', function() {
+			stdout.write('\n');
+			tracks.shift();
+			downloadTrackRequestPrep(tracks);
+		});	
+}
+
+/* REQUEST PREPS */
+
+// Preps to enter into the cycle of downloads
+var downloadPlaylistPrep = function(playlists, playlistIndex) {
+	var playlist = playlists[playlistIndex];
+	// Start on the download path
+	downloadTrackRequestPrep(playlist.tracks);
+}
+
+// Preps each download, and then ships it to the request function. Isn't really needed but makes things cleaner
+var downloadTrackRequestPrep = function(tracks) {
+	if (tracks.length === 0) {
+		exitProcess(chalk.cyan("Tracks have finished downloading."));
+	} else {
+		// Download track and then call again after shifting track
+		if (tracks[0].downloadable) {
+			console.log(tracks[0].title + chalk.green(" is beginning download."));
+			downloadTrackRequest(tracks, 
+				tracks[0].title.replace(/[^a-z0-9_\-]/gi, '_') + ".mp3", 
+				tracks[0].download_url + "?client_id=" + client_key);
+		} else {
+			console.log(tracks[0].title + chalk.red(" is not downloadable."));
+			tracks.shift();
+			downloadTrackRequestPrep(tracks);
+		}
+	}
 }
 
 

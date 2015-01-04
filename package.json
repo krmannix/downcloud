@@ -1,8 +1,9 @@
 {
   "name": "DownCloud",
   "version": "0.0.5",
-  "dependencies" : {
-    "request" : "2.x.x"
+  "dependencies": {
+    "chalk": "^0.5.1",
+    "request": "2.x.x"
   },
   "description": "Download SoundCloud playlists from your favorite users via the terminal",
   "main": "app.js",
