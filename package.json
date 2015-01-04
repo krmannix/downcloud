@@ -2,6 +2,7 @@
   "name": "DownCloud",
   "version": "0.0.5",
   "dependencies": {
+    "bluebird": "^2.5.3",
     "chalk": "^0.5.1",
     "request": "2.x.x"
   },

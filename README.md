@@ -13,8 +13,9 @@ Download people's SoundCloud playlists via the terminal (__Work in progress__)
 		* OR
 		* Chooses file location to download playlist to
 			* Must check that this file location is valid
+		* Go back to all playlists for user
 	* Runner can download all playlists
 * ~~Show percentage of song downloaded along with song loaded~~
-* Convert all to 1 host
+* ~~Convert all to 1 host~~
 * Convert everything to use request dependency
 * Allow user to cycle through options

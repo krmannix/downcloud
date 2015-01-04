@@ -3,6 +3,7 @@ var https = require('https');
 var fs = require('fs');
 var request = require('request');
 var chalk = require('chalk');
+var Promise = require('bluebird');
 var client = require('./client_id');
 
 /* SET UP USER INPUT */
@@ -11,7 +12,6 @@ process.stdin.setEncoding('utf8');
 
 /* GLOBAL VARIABLES */
 var client_key = client.client_key;
-var searchhost = "https://api-v2.soundcloud.com";
 var clienthost = "https://api.soundcloud.com";
 var limit = 10;
 var user;
@@ -43,7 +43,7 @@ stdin.once('data', function(data) {
 
 /* REQUESTS */
 var searchRequest = function(user, offset) {
-	https.get(searchhost + "/search/users?q=" + user + "&limit=" + limit, function(response) {
+	https.get(clienthost + "/users?q=" + user + "&limit=" + limit + "&client_id=" + client_key, function(response) {
 		var body = "";
 		response.on("data", function(chunk) {
 			body += chunk;
@@ -62,8 +62,7 @@ var searchRequest = function(user, offset) {
 }
 
 var chooseSearchResultRequest = function(body) {
-	var json = JSON.parse(body);
-	var collection = json.collection;
+	var collection = JSON.parse(body);
 	var users = [];
 	for (var i = 0; i < collection.length; i++) {
 		users.push({username: collection[i].username, id: collection[i].id, uri: collection[i].uri});
