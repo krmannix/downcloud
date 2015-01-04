@@ -16,16 +16,20 @@ var stdout = process.stdout;
 var stdin = process.stdin;
 
 /* UTILITY FUNCTIONS */
-var grabInput = function(inputs, values, callback) {
+var grabInput = function(num_inputs, values, callback) {
 	stdin.once('data', function(data) {
-		if (!isNaN(data.trim()) && parseInt(data.trim(), 10) < 10) {
+		if (!isNaN(data.trim()) && parseInt(data.trim(), 10) < num_inputs) {
 			callback(values, parseInt(data.trim(), 10));
 		} else {
-			console.log("data is " + data.trim() + "." + (parseInt(data.trim(), 10) === 8));
 			stdout.write("Not a valid input. Please enter a valid input: ");
-			grabInput(inputs, callback);
+			grabInput(num_inputs, values, callback);
 		}
 	});
+}
+
+var exitProcess = function(reason) {
+	console.log(reason);
+	process.exit();
 }
 
 /* START OF PROCESS */
@@ -67,15 +71,12 @@ var chooseSearchResultRequest = function(body) {
 	var json = JSON.parse(body);
 	var collection = json.collection;
 	var users = [];
-	//var inputs = ['n'];
-	var inputs = [];
 	for (var i = 0; i < collection.length; i++) {
 		users.push({username: collection[i].username, id: collection[i].id, uri: collection[i].uri});
 		console.log(i + ": " + collection[i].username);
-		inputs.push(i);
 	}
 	stdout.write("Enter [0-" + collection.length + "] to select a user: ");
-	grabInput(inputs, users, artistSearchRequest);
+	grabInput(collection.length, users, artistSearchRequest);
 }
 
 var artistSearchRequest = function(artists, artistIndex) {
@@ -98,12 +99,28 @@ var artistSearchRequest = function(artists, artistIndex) {
 	});
 }
 
+var downloadPlaylistRequest = function(playlists, playlistIndex) {
+	var playlist = playlists[playlistIndex];
+	// console.log(playlist.tracks[0]);
+	for (var i = 0; i < playlist.tracks.length; i++) {
+		console.log(playlist.tracks[i].title + " " + playlist.tracks[i].downloadable);
+	}
+	//console.log(playlist);
+}
+
 var choosePlaylistResultRequest = function(body) {
-	console.log("Playlist Result");
 	var json = JSON.parse(body);
+	var playlists = [];
+	// Exit if there are no playlists
+	if (json.length === 0) {
+		exitProcess("User has no playlists. Exiting.");
+	}
 	for (var i = 0; i < json.length; i++) {
 		console.log(i + ": " + json[i].title);
+		playlists.push({title: json[i].title, tracks: json[i].tracks, id: json[i].id})
 	}
+	stdout.write("Enter [0-" + json.length + "] to select a playlist to download: ");
+	grabInput(json.length, playlists, downloadPlaylistRequest);
 }
 
 
