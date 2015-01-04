@@ -1,16 +1,20 @@
 /* MODULE IMPORTS */
 var https = require('https');
+var client = require('./client_id');
 
 /* SET UP USER INPUT */
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
 
 /* GLOBAL VARIABLES */
+var client_key = client.client_key;
 var host = "https://api-v2.soundcloud.com";
 var limit = 10;
 var user;
 var stdout = process.stdout;
 var stdin = process.stdin;
+
+console.log(client_key);
 
 /* START OF PROCESS */
 /* Check for user input */
@@ -57,6 +61,7 @@ var chooseSearchResultRequest = function(body) {
 		users.push({username: collection[i].username, id: collection[i].id});
 		console.log(i + ": " + collection[i].username);
 	}
+	console.log(users[0].id);
 	stdout.write("Enter [0-" + collection.length + "] to select a user or n for next 10 users: ");
 }
 
