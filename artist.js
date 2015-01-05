@@ -1,7 +1,9 @@
 // In this sense, we call "artists" the people who have the playlists, although they're really users (in most cases)
 var request = require('request');
+var chalk = require('chalk');
 var constants = require('./constants');
 var Playlist = require('./playlist');
+var Search = require('./search');
 var limit = constants.limit;
 var client_key = constants.client_key;
 var stdout = constants.stdout;
@@ -37,23 +39,26 @@ var choosePlaylist = function(body) {
 	var collection = JSON.parse(body);
 	// Exit if there are no playlists
 	if (collection.length === 0) {
-		exitProcess("User has no playlists. Exiting.");
 		// Go back to search for user
+		console.log("User has no playlists.");
+		Search.startSearch();		
 	} else {
 		// We have results, check for length and show appropriate output
 		if (collection.length > 10) collection = collection.slice(0, 10); // We want max 10 elements
 		var playlists = getPlaylistData(collection);
 		if (playlists == 10) {
-			console.log("Enter [0-" + (collection.length-1) + "] to download a playlist");
-			console.log("Enter [n] or [N] to see next 10 results");
-			console.log("Enter [a] or [A] to download all playlists");
-			stdout.write("[0-" + (collection.length-1) + ", n, N, a, A]: ");
+			console.log(chalk.cyan("Enter [0-" + (collection.length-1) + "] to download a playlist"));
+			console.log(chalk.cyan("Enter [n] or [N] to see next 10 results"));
+			console.log(chalk.cyan("Enter [a] or [A] to download all playlists"));
+			console.log(chalk.cyan("Enter [x] or [X] to do a new search"));
+			stdout.write("[0-" + (collection.length-1) + ", n, N, a, A, x, X]: ");
 			choosePlaylistInput(playlists, true);
 		} else {
 			// There are less than 10 results, meaning that there are no more to be searched for 
-			console.log("Enter [0-" + (collection.length-1) + "] to download a playlist");
-			console.log("Enter [a] or [A] to download all playlists");
-			stdout.write("[0-" + (collection.length-1) + ", a, A]: ");
+			console.log(chalk.cyan("Enter [0-" + (collection.length-1) + "] to download a playlist"));
+			console.log(chalk.cyan("Enter [a] or [A] to download all playlists"));
+			console.log(chalk.cyan("Enter [x] or [X] to do a new search"));
+			stdout.write("[0-" + (collection.length-1) + ", a, A, x, X]: ");
 			choosePlaylistInput(playlists, false);
 		}
 	}
@@ -63,20 +68,30 @@ var choosePlaylistInput = function(playlists, hasMoreThan10) {
 	stdin.once('data', function(data_) {
 		var data = data_.trim();
 		if (data === 'a' || data === 'A') {
-			console.log("This will launch into the download all playlists part");
 			offset_playlist = 0;
 			// Download all playlists
+			constants.drawLine();
+			Playlist.downloadAllPlaylists(playlists).then(function() {
+				constants.drawLine();
+				console.log(chalk.cyan("Would you like to do anything else with this user?"));
+				artistSearchRequest(artist);
+			});
 		} else if (hasMoreThan10 && (data === 'n' || data === 'N')) {
 			// Add 10 to offset and show next ten guys
 			offset_playlist += 10;
+			constants.log("Next results:");
 			artistSearchRequest(artist);
+		} else if (data === 'x' || data === 'X') {
+			// Start at the beginning
+			constants.drawLine();
+			Search.startSearch();
 		} else if (!isNaN(data) && data.indexOf('.') < 0 && parseInt(data, 10) < 10) {
 			// Choose an artist, and go into the artist part
-			console.log("This will launch into the download one playlist part");
 			offset_playlist = 0;
-			// console.log(playlists[parseInt(data, 10)].tracks);
-			Playlist.downloadOnePlaylist(playlists[parseInt(data, 10)].tracks).then(function() {
-				console.log("And now we're back here");
+			Playlist.downloadOnePlaylist(playlists[parseInt(data, 10)]).then(function() {
+				constants.drawLine();
+				console.log(chalk.cyan("Would you like to do anything else with this user?"));
+				artistSearchRequest(artist);
 			});
 		} else {
 			// Invalid input, re-enter this function

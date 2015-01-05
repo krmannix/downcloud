@@ -9,14 +9,31 @@ var stdout = constants.stdout;
 var stdin = constants.stdin;
 var clienthost = constants.clienthost;
 
-var downloadOnePlaylist = function(tracks) {
-	console.log("In here");
+var downloadAllPlaylists = function(playlists) {
 	return new Promise(function (resolve, reject) {
+		Promise.reduce(playlists, function(total, playlist) {
+			return downloadOnePlaylist(playlist).then(function(contents) {
+				total++;
+				return total;
+			});
+		});
+	}, 0).then(function(total) {
+		console.log(total + " playlists downloaded.");
+	}).catch(function(e) {
+		console.log("There was an error");
+		reject();
+	});
+}
+
+var downloadOnePlaylist = function(playlist) {
+	return new Promise(function (resolve, reject) {
+		var tracks = playlist.tracks;
 		if (tracks.length === 0) {
 			console.log(chalk.cyan("No tracks to download."));
 			resolve();
 		} else {
 			var total_tracks = 0;
+			console.log(chalk.cyan("Downloading playlist: ") + chalk.yellow(playlist.title));
 			Promise.reduce(tracks, function(total, track) {
 				return downloadTrack(track).then(function(contents) {
 					if (contents) total++;
@@ -26,19 +43,12 @@ var downloadOnePlaylist = function(tracks) {
 			}, 0).then(function(total) {
 				console.log(total + " tracks downloaded.");
 				console.log(total_tracks + " tracks were not downloadable.");
-				process.exit();
+				console.log();
+				resolve();
 			}).catch(function(e) {
 				console.log("There was an error.");
-				process.exit();
+				reject();
 			});
-			// var downloadPromises = [];
-			// for (var i = 0; i < tracks.length; i++) {
-			// 	downloadPromises.push(downloadTrack(tracks[i]));
-			// }
-			// Promise.settle(downloadPromises).then(function (results) {
-			// 	// results.forEach(function(result){});
-			// 	resolve();
-			// });
 		}
 	});
 }
@@ -73,3 +83,4 @@ var downloadTrack = function(track) {
 }
 
 module.exports.downloadOnePlaylist = downloadOnePlaylist;
+module.exports.downloadAllPlaylists = downloadAllPlaylists;

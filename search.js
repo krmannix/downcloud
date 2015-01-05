@@ -1,4 +1,5 @@
 var request = require('request');
+var chalk = require('chalk');
 var constants = require('./constants');
 var Artist = require('./artist');
 var limit = constants.limit;
@@ -12,7 +13,7 @@ var user;
 
 var searchInput = function() {
 	offset = 0;
-	stdout.write("Search for a SoundCloud user: ");
+	stdout.write(chalk.cyan("Search for a SoundCloud user: "));
 	stdin.once('data', function(data) {
 		searchRequest(data);
 	});
@@ -51,15 +52,15 @@ var chooseSearchResultRequest = function(body) {
 		if (collection.length > 10) collection = collection.slice(0, 10); // We want max 10 elements
 		var users = getSearchUsersData(collection);
 		if (users.length == 10) {
-			console.log("Enter [0-" + (collection.length-1) + "] to select a user");
-			console.log("Enter [n] or [N] to see next 10 results");
-			console.log("Enter [x] or [X] for new search ");
+			console.log(chalk.cyan("Enter [0-" + (collection.length-1) + "] to select a user"));
+			console.log(chalk.cyan("Enter [n] or [N] to see next 10 results"));
+			console.log(chalk.cyan("Enter [x] or [X] for new search "));
 			stdout.write("[0-" + (collection.length-1) + ", n, N, x, X]: ");
 			chooseSearchResultInput(users, true);
 		} else {
 			// There are less than 10 results, meaning that there are no more to be searched for 
-			console.log("Enter [0-" + (collection.length-1) + "] to select a user");
-			console.log("Enter [x] or [X] for new search ");
+			console.log(chalk.cyan("Enter [0-" + (collection.length-1) + "] to select a user"));
+			console.log(chalk.cyan("Enter [x] or [X] for new search "));
 			stdout.write("[0-" + (collection.length-1) + ", x, X]: ");
 			chooseSearchResultInput(users, false);
 		}
@@ -71,13 +72,16 @@ var chooseSearchResultInput = function(users, hasMoreThan10) {
 		var data = data_.trim();
 		if (data === 'x' || data === 'X') {
 			// Redo search
+			constants.drawLine();
 			searchInput();
 		} else if (hasMoreThan10 && (data === 'n' || data === 'N')) {
 			// Add 10 to offset and show next ten guys
 			offset += 10;
+			console.log("Next results: ");
 			searchRequest(user);
 		} else if (!isNaN(data) && data.indexOf('.') < 0 && parseInt(data, 10) < 10) {
 			// Choose an artist, and go into the artist part
+			constants.drawLine();
 			Artist.artistSearch(users[parseInt(data, 10)]);
 		} else {
 			// Invalid input, re-enter this function

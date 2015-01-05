@@ -5,3 +5,9 @@ module.exports.clienthost = "https://api.soundcloud.com";
 module.exports.limit = 10;
 module.exports.stdout = process.stdout;
 module.exports.stdin = process.stdin;
+
+var drawLine = function() {
+	console.log("--------------------------------");
+}
+
+module.exports.drawLine = drawLine;
