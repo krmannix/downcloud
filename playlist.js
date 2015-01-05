@@ -1,6 +1,7 @@
 var request = require('request');
 var chalk = require('chalk');
 var Promise = require('bluebird');
+var fs = require('fs');
 var constants = require('./constants');
 var limit = constants.limit;
 var client_key = constants.client_key;
@@ -8,43 +9,52 @@ var stdout = constants.stdout;
 var stdin = constants.stdin;
 var clienthost = constants.clienthost;
 
-// Download for one playlist
 var downloadOnePlaylist = function(tracks) {
+	console.log("In here");
 	return new Promise(function (resolve, reject) {
 		if (tracks.length === 0) {
-			exitProcess(chalk.cyan("Tracks have finished downloading."));
+			console.log(chalk.cyan("No tracks to download."));
 			resolve();
 		} else {
-			// Download track and then call again after shifting track
-			if (tracks[0].downloadable) {
-				console.log(tracks[0].title + chalk.green(" is beginning download."));
-				downloadTrackRequest(tracks, 
-					tracks[0].title.replace(/[^a-z0-9_\-]/gi, '_') + ".mp3", 
-					tracks[0].download_url + "?client_id=" + client_key);
-			} else {
-				console.log(tracks[0].title + chalk.red(" is not downloadable."));
-				tracks.shift();
-				downloadOnePlaylist(tracks);
+			var downloadPromises = [];
+			for (var i = 0; i < tracks.length; i++) {
+				downloadPromises.push(downloadTrack(tracks[i]));
 			}
+			Promise.settle(downloadPromises).then(function (results) {
+				// results.forEach(function(result){});
+				resolve();
+			});
 		}
 	});
 }
 
-var downloadTrack = function(tracks, dest, url) {
-	var current_length = 0, total_length;
-	request.get(url).on('data', function(data) {
-		current_length += data.length;
-		if (total_length) {
-			stdout.write("\r");
-			stdout.write((Math.round((current_length/total_length)*1000)/10).toFixed(1) + "% downloaded");
+var downloadTrack = function(track) {
+	return new Promise(function (resolve, reject) {
+		if (track.downloadable) {
+			var dest = track.title.replace(/[^a-z0-9_\-]/gi, '_') + ".mp3";
+			var url = track.download_url + "?client_id=" + client_key;
+			var current_length = 0, total_length;
+			console.log(track.title + chalk.green(" is beginning download."));
+			request.get(url).on('data', function(data) {
+				current_length += data.length;
+				if (total_length) {
+					stdout.write("\r");
+					stdout.write((Math.round((current_length/total_length)*1000)/10).toFixed(1) + "% downloaded");
+				}
+			}).on('response', function(response) {
+				total_length = response.headers['content-length'];
+			}).on('error', function(err) {
+				console.log(err);
+				reject(err);
+			}).pipe(fs.createWriteStream(dest)).on('close', function() {
+				stdout.write('\n');
+				resolve();
+			});	
+		} else {
+			console.log(track.title + chalk.red(" is not downloadable."));
+			resolve();
 		}
-	}).on('response', function(response) {
-		total_length = response.headers['content-length'];
-	}).pipe(fs.createWriteStream(dest)).on('close', function() {
-		stdout.write('\n');
-		tracks.shift();
-		downloadOnePlaylist(tracks);
-	});	
+	});
 }
 
 module.exports.downloadOnePlaylist = downloadOnePlaylist;

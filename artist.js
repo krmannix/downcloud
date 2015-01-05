@@ -74,7 +74,10 @@ var choosePlaylistInput = function(playlists, hasMoreThan10) {
 			// Choose an artist, and go into the artist part
 			console.log("This will launch into the download one playlist part");
 			offset_playlist = 0;
-			Playlist.downloadOnePlaylist(playlists[parseInt(data, 10)]);
+			// console.log(playlists[parseInt(data, 10)].tracks);
+			Playlist.downloadOnePlaylist(playlists[parseInt(data, 10)].tracks).then(function() {
+				console.log("And now we're back here");
+			});
 		} else {
 			// Invalid input, re-enter this function
 			console.log("That is not a valid input.");
