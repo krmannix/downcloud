@@ -16,14 +16,29 @@ var downloadOnePlaylist = function(tracks) {
 			console.log(chalk.cyan("No tracks to download."));
 			resolve();
 		} else {
-			var downloadPromises = [];
-			for (var i = 0; i < tracks.length; i++) {
-				downloadPromises.push(downloadTrack(tracks[i]));
-			}
-			Promise.settle(downloadPromises).then(function (results) {
-				// results.forEach(function(result){});
-				resolve();
+			var total_tracks = 0;
+			Promise.reduce(tracks, function(total, track) {
+				return downloadTrack(track).then(function(contents) {
+					if (contents) total++;
+					else total_tracks++;
+					return total;
+				});
+			}, 0).then(function(total) {
+				console.log(total + " tracks downloaded.");
+				console.log(total_tracks + " tracks were not downloadable.");
+				process.exit();
+			}).catch(function(e) {
+				console.log("There was an error.");
+				process.exit();
 			});
+			// var downloadPromises = [];
+			// for (var i = 0; i < tracks.length; i++) {
+			// 	downloadPromises.push(downloadTrack(tracks[i]));
+			// }
+			// Promise.settle(downloadPromises).then(function (results) {
+			// 	// results.forEach(function(result){});
+			// 	resolve();
+			// });
 		}
 	});
 }
@@ -45,14 +60,14 @@ var downloadTrack = function(track) {
 				total_length = response.headers['content-length'];
 			}).on('error', function(err) {
 				console.log(err);
-				reject(err);
+				reject(false);
 			}).pipe(fs.createWriteStream(dest)).on('close', function() {
 				stdout.write('\n');
-				resolve();
+				resolve(true);
 			});	
 		} else {
 			console.log(track.title + chalk.red(" is not downloadable."));
-			resolve();
+			resolve(false);
 		}
 	});
 }
