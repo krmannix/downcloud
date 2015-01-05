@@ -1,27 +1,17 @@
-var request = require('request');
-var chalk = require('chalk');
-var Promise = require('bluebird');
-var fs = require('fs');
-var constants = require('./constants');
-var limit = constants.limit;
-var client_key = constants.client_key;
-var stdout = constants.stdout;
-var stdin = constants.stdin;
-var clienthost = constants.clienthost;
-
 var downloadAllPlaylists = function(playlists) {
 	return new Promise(function (resolve, reject) {
 		Promise.reduce(playlists, function(total, playlist) {
-			return downloadOnePlaylist(playlist).then(function(contents) {
+			return downloadOnePlaylist(playlist).then(function() {
 				total++;
 				return total;
 			});
+		}, 0).then(function(total) {
+			console.log(total + " playlists downloaded.\n");
+			resolve();
+		}).catch(function(e) {
+			console.log("There was an error. " + e.message);
+			reject();
 		});
-	}, 0).then(function(total) {
-		console.log(total + " playlists downloaded.");
-	}).catch(function(e) {
-		console.log("There was an error");
-		reject();
 	});
 }
 
@@ -41,12 +31,10 @@ var downloadOnePlaylist = function(playlist) {
 					return total;
 				});
 			}, 0).then(function(total) {
-				console.log(total + " tracks downloaded.");
-				console.log(total_tracks + " tracks were not downloadable.");
-				console.log();
+				console.log(total + " tracks downloaded.\n" + total_tracks + " tracks were not downloadable.\n");
 				resolve();
 			}).catch(function(e) {
-				console.log("There was an error.");
+				console.log("There was an error. " + e.message);
 				reject();
 			});
 		}
@@ -81,6 +69,3 @@ var downloadTrack = function(track) {
 		}
 	});
 }
-
-module.exports.downloadOnePlaylist = downloadOnePlaylist;
-module.exports.downloadAllPlaylists = downloadAllPlaylists;

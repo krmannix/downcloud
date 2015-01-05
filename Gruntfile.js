@@ -1,5 +1,5 @@
 module.exports = function (grunt) {
-    
+
     // Load all grunt-* packages from package.json
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-concat');    
@@ -7,7 +7,13 @@ module.exports = function (grunt) {
     grunt.initConfig({
         paths: {
             src: {
-                js: 'src/**/*.js'
+                js: ['src/constants.js',
+                     'src/client_id.js',
+                     'src/artist.js',
+                     'src/playlist.js',
+                     'src/search.js',
+                     'src/app.js'
+                    ]
             },
             dest: {
                 js: 'dist/main.js',

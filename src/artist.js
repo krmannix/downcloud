@@ -1,21 +1,10 @@
 // In this sense, we call "artists" the people who have the playlists, although they're really users (in most cases)
-var request = require('request');
-var chalk = require('chalk');
-var constants = require('./constants');
-var Playlist = require('./playlist');
-var Search = require('./search');
-var limit = constants.limit;
-var client_key = constants.client_key;
-var stdout = constants.stdout;
-var stdin = constants.stdin;
-var clienthost = constants.clienthost;
-
 var offset_playlist = 0;
 var artist;
 
 var artistSearchRequest = function(_artist) {
 	artist = _artist;
-	request(artist.uri + "/playlists?limit=" + constants.limit + "&offset=" + offset_playlist + "&client_id=" + client_key, 
+	request(artist.uri + "/playlists?limit=" + limit + "&offset=" + offset_playlist + "&client_id=" + client_key, 
 		function(error, response, body) {
 			if (!error && response.statusCode == 200) {
 				choosePlaylist(body);
@@ -70,26 +59,26 @@ var choosePlaylistInput = function(playlists, hasMoreThan10) {
 		if (data === 'a' || data === 'A') {
 			offset_playlist = 0;
 			// Download all playlists
-			constants.drawLine();
-			Playlist.downloadAllPlaylists(playlists).then(function() {
-				constants.drawLine();
+			drawLine();
+			downloadAllPlaylists(playlists).then(function() {
+				drawLine();
 				console.log(chalk.cyan("Would you like to do anything else with this user?"));
 				artistSearchRequest(artist);
 			});
 		} else if (hasMoreThan10 && (data === 'n' || data === 'N')) {
 			// Add 10 to offset and show next ten guys
 			offset_playlist += 10;
-			constants.log("Next results:");
+			console.log("Next results:");
 			artistSearchRequest(artist);
 		} else if (data === 'x' || data === 'X') {
 			// Start at the beginning
-			constants.drawLine();
+			drawLine();
 			Search.startSearch();
 		} else if (!isNaN(data) && data.indexOf('.') < 0 && parseInt(data, 10) < 10) {
 			// Choose an artist, and go into the artist part
 			offset_playlist = 0;
-			Playlist.downloadOnePlaylist(playlists[parseInt(data, 10)]).then(function() {
-				constants.drawLine();
+			downloadOnePlaylist(playlists[parseInt(data, 10)]).then(function() {
+				drawLine();
 				console.log(chalk.cyan("Would you like to do anything else with this user?"));
 				artistSearchRequest(artist);
 			});
@@ -106,6 +95,6 @@ var choosePlaylistInput = function(playlists, hasMoreThan10) {
 	});
 }
 
-module.exports.artistSearch = artistSearchRequest;
+var artistSearch = artistSearchRequest;
 
 

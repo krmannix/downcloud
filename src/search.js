@@ -1,13 +1,3 @@
-var request = require('request');
-var chalk = require('chalk');
-var constants = require('./constants');
-var Artist = require('./artist');
-var limit = constants.limit;
-var client_key = constants.client_key;
-var stdout = constants.stdout;
-var stdin = constants.stdin;
-var clienthost = constants.clienthost;
-
 var offset = 0;
 var user;
 
@@ -21,7 +11,7 @@ var searchInput = function() {
 
 var searchRequest = function(_user) {
 	user = _user;
-	request(clienthost + "/users?limit=" + constants.limit + "&q=" + user + "&offset=" + offset + "&client_id=" + client_key, 
+	request(clienthost + "/users?limit=" + limit + "&q=" + user + "&offset=" + offset + "&client_id=" + client_key, 
 		function(error, response, body) {
 			if (!error && response.statusCode == 200) {
 				chooseSearchResultRequest(body);
@@ -72,7 +62,7 @@ var chooseSearchResultInput = function(users, hasMoreThan10) {
 		var data = data_.trim();
 		if (data === 'x' || data === 'X') {
 			// Redo search
-			constants.drawLine();
+			drawLine();
 			searchInput();
 		} else if (hasMoreThan10 && (data === 'n' || data === 'N')) {
 			// Add 10 to offset and show next ten guys
@@ -81,8 +71,8 @@ var chooseSearchResultInput = function(users, hasMoreThan10) {
 			searchRequest(user);
 		} else if (!isNaN(data) && data.indexOf('.') < 0 && parseInt(data, 10) < 10) {
 			// Choose an artist, and go into the artist part
-			constants.drawLine();
-			Artist.artistSearch(users[parseInt(data, 10)]);
+			drawLine();
+			artistSearch(users[parseInt(data, 10)]);
 		} else {
 			// Invalid input, re-enter this function
 			console.log("That is not a valid input.");
@@ -96,7 +86,7 @@ var chooseSearchResultInput = function(users, hasMoreThan10) {
 	});
 }
 
-module.exports.startSearch = searchInput;
+var startSearch = searchInput;
 
 
 
