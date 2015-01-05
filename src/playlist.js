@@ -47,13 +47,11 @@ var downloadTrack = function(track) {
 			var dest = track.title.replace(/[^a-z0-9_\-]/gi, '_') + ".mp3";
 			var url = track.download_url + "?client_id=" + client_key;
 			var current_length = 0, total_length;
-			console.log(track.title + chalk.green(" is beginning download."));
+			console.log(chalk.green("Beginning download: ") + track.title);
 			request.get(url).on('data', function(data) {
-				current_length += data.length;
-				if (total_length) {
-					stdout.write("\r");
-					stdout.write((Math.round((current_length/total_length)*1000)/10).toFixed(1) + "% downloaded");
-				}
+				current_length += data.length; // Update the current length
+				// Create the percentage display
+				percentageDisplayCalculation(current_length, total_length);
 			}).on('response', function(response) {
 				total_length = response.headers['content-length'];
 			}).on('error', function(err) {
@@ -64,8 +62,23 @@ var downloadTrack = function(track) {
 				resolve(true);
 			});	
 		} else {
-			console.log(track.title + chalk.red(" is not downloadable."));
+			console.log(chalk.red("Not downloadable: ") + track.title);
 			resolve(false);
 		}
 	});
 }
+
+var percentageDisplayCalculation = function(current_length, total_length) {
+	var div = current_length/total_length;
+	var number = (Math.round(div*1000)/10).toFixed(1);
+	var prePercent = " "; if (number < 10) prePercent = "  "; else if (number == 100) prePercent = ""; // Get correct pre-precentage buffer
+	var percentComplete = Math.floor((terminal_width - 8)*div);
+	var fillIns = (percentComplete === 0) ? "" : Array(percentComplete).join("X");
+	var spaces = Array(terminal_width - 8 - percentComplete).join(" ") + "]"; // 8 is the space that will be taken up by percentage and '[' char
+	stdout.write("\r");
+	stdout.write(prePercent + number + "% [" + fillIns + spaces);
+}
+
+
+
+

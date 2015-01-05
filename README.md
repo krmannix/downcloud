@@ -29,4 +29,5 @@ Download people's SoundCloud playlists via the terminal (__Work in progress__)
 * ~~Allow user to cycle through options~~
 * ~~Add exit option~~
 * ~~Cool Title Screen (the most fun part)~~
-* Add better percentage screens for downloading songs
+* ~~Add better percentage screens for downloading songs~~
+* Add timeouts to requests

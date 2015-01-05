@@ -30,7 +30,7 @@ var choosePlaylist = function(body) {
 	if (collection.length === 0) {
 		// Go back to search for user
 		console.log("User has no playlists.");
-		Search.startSearch();		
+		startSearch();		
 	} else {
 		// We have results, check for length and show appropriate output
 		if (collection.length > 10) collection = collection.slice(0, 10); // We want max 10 elements
@@ -77,7 +77,7 @@ var choosePlaylistInput = function(playlists, hasMoreThan10) {
 		} else if (data === 'x' || data === 'X') {
 			// Start at the beginning
 			drawLine();
-			Search.startSearch();
+			startSearch();
 		} else if (!isNaN(data) && data.indexOf('.') < 0 && parseInt(data, 10) < 10) {
 			// Choose an artist, and go into the artist part
 			offset_playlist = 0;
