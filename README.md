@@ -1,5 +1,11 @@
 <h1>Downcloud</h1>
 
+    ____                      ________                __
+   / __ \____ _      ______  / ____/ /___  __  ______/ /
+  / / / / __ \ | /| / / __ \/ /   / / __ \/ / / / __  / 
+ / /_/ / /_/ / |/ |/ / / / / /___/ / /_/ / /_/ / /_/ /  
+/_____/\____/|__/|__/_/ /_/\____/_/\____/\__,_/\__,_/   
+
 Download people's SoundCloud playlists via the terminal (__Work in progress__)
 
 <h3>TO DO</h3>
@@ -22,4 +28,5 @@ Download people's SoundCloud playlists via the terminal (__Work in progress__)
 * ~~Convert everything to use request dependency~~
 * ~~Allow user to cycle through options~~
 * ~~Add exit option~~
-* Cool Title Screen (the most fun part)
+* ~~Cool Title Screen (the most fun part)~~
+* Add better percentage screens for downloading songs
