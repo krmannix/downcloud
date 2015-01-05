@@ -13,3 +13,8 @@ var stdin = process.stdin;
 var drawLine = function() {
 	console.log("--------------------------------");
 }
+
+var exitProcess = function(reason) {
+	console.log(chalk.yellow(reason));
+	process.exit();
+}

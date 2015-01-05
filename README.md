@@ -21,4 +21,5 @@ Download people's SoundCloud playlists via the terminal (__Work in progress__)
 * ~~Convert all to 1 host~~
 * ~~Convert everything to use request dependency~~
 * ~~Allow user to cycle through options~~
+* ~~Add exit option~~
 * Cool Title Screen (the most fun part)

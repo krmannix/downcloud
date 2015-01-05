@@ -45,13 +45,15 @@ var chooseSearchResultRequest = function(body) {
 			console.log(chalk.cyan("Enter [0-" + (collection.length-1) + "] to select a user"));
 			console.log(chalk.cyan("Enter [n] or [N] to see next 10 results"));
 			console.log(chalk.cyan("Enter [x] or [X] for new search "));
-			stdout.write("[0-" + (collection.length-1) + ", n, N, x, X]: ");
+			console.log(chalk.cyan("Enter [e] or [E] to exit"));
+			stdout.write("[0-" + (collection.length-1) + ", n, N, x, X, e, E]: ");
 			chooseSearchResultInput(users, true);
 		} else {
 			// There are less than 10 results, meaning that there are no more to be searched for 
 			console.log(chalk.cyan("Enter [0-" + (collection.length-1) + "] to select a user"));
 			console.log(chalk.cyan("Enter [x] or [X] for new search "));
-			stdout.write("[0-" + (collection.length-1) + ", x, X]: ");
+			console.log(chalk.cyan("Enter [e] or [E] to exit"));
+			stdout.write("[0-" + (collection.length-1) + ", x, X, e, E]: ");
 			chooseSearchResultInput(users, false);
 		}
 	}
@@ -69,6 +71,8 @@ var chooseSearchResultInput = function(users, hasMoreThan10) {
 			offset += 10;
 			console.log("Next results: ");
 			searchRequest(user);
+		} else if (data === 'e' || data === 'E') {
+			exitProcess("Thanks for using DownCloud!");
 		} else if (!isNaN(data) && data.indexOf('.') < 0 && parseInt(data, 10) < 10) {
 			// Choose an artist, and go into the artist part
 			drawLine();
@@ -77,9 +81,9 @@ var chooseSearchResultInput = function(users, hasMoreThan10) {
 			// Invalid input, re-enter this function
 			console.log("That is not a valid input.");
 			if (hasMoreThan10) {
-				stdout.write("[0-" + (users.length-1) + ", n, N, x, X]: ");
+				stdout.write("[0-" + (users.length-1) + ", n, N, x, X, e, E]: ");
 			} else {
-				stdout.write("[0-" + (users.length-1) + ", x, X]: ");
+				stdout.write("[0-" + (users.length-1) + ", x, X, e, E]: ");
 			}
 			chooseSearchResultInput(users, hasMoreThan10);
 		}

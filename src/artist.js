@@ -40,14 +40,16 @@ var choosePlaylist = function(body) {
 			console.log(chalk.cyan("Enter [n] or [N] to see next 10 results"));
 			console.log(chalk.cyan("Enter [a] or [A] to download all playlists"));
 			console.log(chalk.cyan("Enter [x] or [X] to do a new search"));
-			stdout.write("[0-" + (collection.length-1) + ", n, N, a, A, x, X]: ");
+			console.log(chalk.cyan("Enter [e] or [E] to exit"));
+			stdout.write("[0-" + (collection.length-1) + ", n, N, a, A, x, X, e, E]: ");
 			choosePlaylistInput(playlists, true);
 		} else {
 			// There are less than 10 results, meaning that there are no more to be searched for 
 			console.log(chalk.cyan("Enter [0-" + (collection.length-1) + "] to download a playlist"));
 			console.log(chalk.cyan("Enter [a] or [A] to download all playlists"));
 			console.log(chalk.cyan("Enter [x] or [X] to do a new search"));
-			stdout.write("[0-" + (collection.length-1) + ", a, A, x, X]: ");
+			console.log(chalk.cyan("Enter [e] or [E] to exit"));
+			stdout.write("[0-" + (collection.length-1) + ", a, A, x, X, e, E]: ");
 			choosePlaylistInput(playlists, false);
 		}
 	}
@@ -65,6 +67,8 @@ var choosePlaylistInput = function(playlists, hasMoreThan10) {
 				console.log(chalk.cyan("Would you like to do anything else with this user?"));
 				artistSearchRequest(artist);
 			});
+		} else if (data === 'e' || data === 'E') {
+			exitProcess("Thanks for using DownCloud!");
 		} else if (hasMoreThan10 && (data === 'n' || data === 'N')) {
 			// Add 10 to offset and show next ten guys
 			offset_playlist += 10;
@@ -86,9 +90,9 @@ var choosePlaylistInput = function(playlists, hasMoreThan10) {
 			// Invalid input, re-enter this function
 			console.log("That is not a valid input.");
 			if (hasMoreThan10) {
-				stdout.write("[0-" + (playlists.length-1) + ", n, N, a, A]: ");
+				stdout.write("[0-" + (playlists.length-1) + ", n, N, a, A, e, E]: ");
 			} else {
-				stdout.write("[0-" + (playlists.length-1) + ", a, A]: ");
+				stdout.write("[0-" + (playlists.length-1) + ", a, A, e, E]: ");
 			}
 			choosePlaylistInput(playlists, hasMoreThan10);
 		}
