@@ -5,4 +5,4 @@ process.stdin.setEncoding('utf8');
 
 /* START OF PROCESS */
 printTitle();
-startSearch();
+setOptions();

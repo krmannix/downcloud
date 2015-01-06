@@ -8,6 +8,7 @@ module.exports = function (grunt) {
         paths: {
             src: {
                 js: ['src/constants.js',
+                     'src/options.js',
                      'src/client_id.js',
                      'src/artist.js',
                      'src/playlist.js',

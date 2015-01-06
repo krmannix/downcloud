@@ -11,7 +11,11 @@ var searchInput = function() {
 
 var searchRequest = function(_user) {
 	user = _user;
-	request(clienthost + "/users?limit=" + limit + "&q=" + user + "&offset=" + offset + "&client_id=" + client_key, 
+	var options = {
+		url: clienthost + "/users?limit=" + limit + "&q=" + user + "&offset=" + offset + "&client_id=" + client_key,
+		timeout: timeout
+	}
+	request(options, 
 		function(error, response, body) {
 			if (!error && response.statusCode == 200) {
 				chooseSearchResultRequest(body);

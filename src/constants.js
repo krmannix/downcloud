@@ -1,8 +1,9 @@
 /* MODULE INPUTS */
 var request = require('request');
 var chalk = require('chalk');
-var fs = require('fs');
+var fs = require('fs-extra');
 var Promise = require('bluebird');
+var path = require('path');
 
 /* GLOBAL VARIABLES */
 var clienthost = "https://api.soundcloud.com";
@@ -10,6 +11,8 @@ var limit = 10;
 var stdout = process.stdout;
 var stdin = process.stdin;
 var terminal_width = stdout.columns;
+var timeout = 10000;
+var save_option;
 
 var printTitle = function() {
 	console.log("Thanks for using...");

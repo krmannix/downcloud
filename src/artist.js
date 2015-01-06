@@ -4,8 +4,11 @@ var artist;
 
 var artistSearchRequest = function(_artist) {
 	artist = _artist;
-	request(artist.uri + "/playlists?limit=" + limit + "&offset=" + offset_playlist + "&client_id=" + client_key, 
-		function(error, response, body) {
+	var options = {
+		url: artist.uri + "/playlists?limit=" + limit + "&offset=" + offset_playlist + "&client_id=" + client_key,
+		timeout: timeout
+	}
+	request(options, function(error, response, body) {
 			if (!error && response.statusCode == 200) {
 				choosePlaylist(body);
 			} else {
@@ -19,7 +22,7 @@ var getPlaylistData = function(collection) {
 	var playlists = [];
 	for (var i = 0; i < collection.length; i++) {
 		console.log(i + ": " + collection[i].title);
-		playlists.push({title: collection[i].title, tracks: collection[i].tracks, id: collection[i].id})
+		playlists.push({title: collection[i].title, tracks: collection[i].tracks, id: collection[i].id, username: collection[i].user.username})
 	}
 	return playlists;
 }

@@ -17,7 +17,6 @@ Download people's SoundCloud playlists via the terminal (__Work in progress__)
 	* ~~Runner chooses which playlist~~
 		* ~~Download playlist to current place this is run~~
 		* OR
-		* Chooses file location to download playlist to
 			* Can choose whether to download each artist in different folder
 			* Can choose whether to download each playlist in seperate folder
 			* Must check that this file location is valid
@@ -30,4 +29,4 @@ Download people's SoundCloud playlists via the terminal (__Work in progress__)
 * ~~Add exit option~~
 * ~~Cool Title Screen (the most fun part)~~
 * ~~Add better percentage screens for downloading songs~~
-* Add timeouts to requests
+* ~~Add timeouts to requests~~
