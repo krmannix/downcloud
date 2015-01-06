@@ -1,3 +1,4 @@
+"use strict"
 /* MODULE INPUTS */
 var request = require('request');
 var chalk = require('chalk');

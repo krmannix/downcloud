@@ -1,3 +1,4 @@
+"use strict"
 /* MODULE INPUTS */
 var request = require('request');
 var chalk = require('chalk');
@@ -429,7 +430,7 @@ var startProcess = function() {
 			if (err) {
 				processExit("There was a problem writing the client id file." + chalk.yellow("\nThanks for using DownCloud!"));
 			} else {
-				console.log(chalk.blue("Client_id successfully added!"));
+				console.log(chalk.cyan("Client_id successfully added!"));
 				client_id = id;
 				resolve();
 			}
@@ -475,6 +476,5 @@ var readFile = function() {
 		exitProcess(chalk.yellow("Thanks for using DownCloud!"));	
 	}
 }
-// );
 
-readFile();
+module.exports.start = readFile;
