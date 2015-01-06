@@ -2,7 +2,7 @@ var writeClientIdToFile = function(id) {
 	return new Promise(function (resolve, reject) {
 		fs.writeJson(__dirname + '/client_id.json', {client_id: id}, function(err) {
 			if (err) {
-				processExit("There was a problem writing the client id file." + chalk.yellow("\nThanks for using DownCloud!"));
+				exitProcess("There was a problem writing the client id file." + chalk.yellow("\nThanks for using DownCloud!"));
 			} else {
 				console.log(chalk.cyan("Client_id successfully added!"));
 				client_id = id;
