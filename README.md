@@ -1,6 +1,6 @@
 # Downcloud 
 
-[![NPM](https://nodei.co/npm/downcloud.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/downcloud/)
+[![NPM](https://nodei.co/npm/downcloud.png?mini=true)](https://nodei.co/npm/downcloud/)
 
 	    ____                      ________                __
 	   / __ \____ _      ______  / ____/ /___  __  ______/ /
