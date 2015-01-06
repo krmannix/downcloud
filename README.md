@@ -54,5 +54,8 @@ Email any _complaints/request/hatemail_ to `kmannix [at] bu.edu`
 * ~~Add better percentage screens for downloading songs~~
 * ~~Add timeouts to requests~~
 * // RELEASE v1.0 //
-* Add configs from terminal for client key, rather than manual input
+* ~~Add configs from terminal for client key, rather than manual input~~
+* Update Github README
+* Update npm README
 
+http://www.anupshinde.com/posts/how-to-create-nodejs-npm-package/
