@@ -13,6 +13,7 @@ var stdin = process.stdin;
 var terminal_width = stdout.columns;
 var timeout = 10000;
 var save_option;
+var client_key;
 
 var printTitle = function() {
 	console.log("Thanks for using...");

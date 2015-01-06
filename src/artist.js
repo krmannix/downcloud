@@ -11,6 +11,8 @@ var artistSearchRequest = function(_artist) {
 	request(options, function(error, response, body) {
 			if (!error && response.statusCode == 200) {
 				choosePlaylist(body);
+			} else if (response.statusCode > 400 && response.statusCode < 500) {
+				exitProcess(chalk.red("Looks like you haven't entered a client key/it isn't correct.\n") + chalk.white("If you're not sure what this means, check out the documentation at https://github.com/krmannix/downcloud\n") + chalk.yellow("Thanks for using DownCloud!"));
 			} else {
 				console.log("HTTP Error: " + response.statusCode);
 			}
@@ -101,7 +103,5 @@ var choosePlaylistInput = function(playlists, hasMoreThan10) {
 		}
 	});
 }
-
-var artistSearch = artistSearchRequest;
 
 

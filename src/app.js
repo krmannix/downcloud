@@ -2,7 +2,8 @@
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
 
-
-/* START OF PROCESS */
-printTitle();
-setOptions();
+var startProcess = function() {
+	/* START OF PROCESS */
+	printTitle();
+	setOptions();
+}

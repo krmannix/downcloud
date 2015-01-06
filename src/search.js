@@ -1,7 +1,7 @@
 var offset = 0;
 var user;
 
-var searchInput = function() {
+var startSearch = function() {
 	offset = 0;
 	stdout.write(chalk.cyan("Search for a SoundCloud user: "));
 	stdin.once('data', function(data) {
@@ -19,8 +19,10 @@ var searchRequest = function(_user) {
 		function(error, response, body) {
 			if (!error && response.statusCode == 200) {
 				chooseSearchResultRequest(body);
+			} else if (response.statusCode > 400 && response.statusCode < 500) {
+				exitProcess(chalk.red("Looks like you haven't entered a client key/it isn't correct.\n") + chalk.white("If you're not sure what this means, check out the documentation at https://github.com/krmannix/downcloud\n") + chalk.yellow("Thanks for using DownCloud!"));
 			} else {
-				console.log("HTTP Error: " + error.message);
+				console.log("HTTP Error: " + response.statusCode);
 			}
 		}
 	);
@@ -40,7 +42,7 @@ var chooseSearchResultRequest = function(body) {
 	if (collection.length === 0) {
 		// No results, initiate new search
 		console.log("There were no results.");
-		searchInput();
+		startSearch();
 	} else {
 		// We have results, check for length and show appropriate output
 		if (collection.length > 10) collection = collection.slice(0, 10); // We want max 10 elements
@@ -69,7 +71,7 @@ var chooseSearchResultInput = function(users, hasMoreThan10) {
 		if (data === 'x' || data === 'X') {
 			// Redo search
 			drawLine();
-			searchInput();
+			startSearch();
 		} else if (hasMoreThan10 && (data === 'n' || data === 'N')) {
 			// Add 10 to offset and show next ten guys
 			offset += 10;
@@ -93,8 +95,6 @@ var chooseSearchResultInput = function(users, hasMoreThan10) {
 		}
 	});
 }
-
-var startSearch = searchInput;
 
 
 

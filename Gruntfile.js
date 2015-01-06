@@ -9,15 +9,15 @@ module.exports = function (grunt) {
             src: {
                 js: ['src/constants.js',
                      'src/options.js',
-                     'src/client_id.js',
                      'src/artist.js',
                      'src/playlist.js',
                      'src/search.js',
-                     'src/app.js'
+                     'src/app.js',
+                     'src/read_client_id.js'
                     ]
             },
             dest: {
-                js: 'dist/main.js',
+                js: 'src/downcloud.js',
                 jsMin: 'dist/main.min.js'
             }
         },
@@ -44,5 +44,6 @@ module.exports = function (grunt) {
         }
     });
 
-    grunt.registerTask('default', ['concat', 'uglify']);
+    //grunt.registerTask('default', ['concat', 'uglify']);
+    grunt.registerTask('default', ['concat']);
 };
