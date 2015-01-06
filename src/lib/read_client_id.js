@@ -2,10 +2,10 @@ var writeClientIdToFile = function(id) {
 	return new Promise(function (resolve, reject) {
 		fs.writeJson(__dirname + '/client_id.json', {client_id: id}, function(err) {
 			if (err) {
-				exitProcess("There was a problem writing the client id file." + chalk.yellow("\nThanks for using DownCloud!"));
+				exitProcess("There was a problem writing the client id file. Try using this with sudo." + chalk.yellow("\nThanks for using DownCloud!"));
 			} else {
 				console.log(chalk.cyan("Client_id successfully added!"));
-				client_id = id;
+				client_key = id;
 				resolve();
 			}
 		});
@@ -33,6 +33,7 @@ var readFile = function() {
 		var json = require(__dirname + '/client_id.json');
 		if (json) {
 			if (json.client_id) {
+				client_key = json.client_id;
 				startProcess();
 			} else {
 				console.log(chalk.yellow("Looks like you need to enter a client id."));
@@ -52,4 +53,4 @@ var readFile = function() {
 }
 // );
 
-readFile();
+module.exports.start = readFile;

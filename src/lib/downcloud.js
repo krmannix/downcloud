@@ -397,7 +397,7 @@ var chooseSearchResultInput = function(users, hasMoreThan10) {
 		} else if (!isNaN(data) && data.indexOf('.') < 0 && parseInt(data, 10) < 10) {
 			// Choose an artist, and go into the artist part
 			drawLine();
-			artistSearch(users[parseInt(data, 10)]);
+			artistSearchRequest(users[parseInt(data, 10)]);
 		} else {
 			// Invalid input, re-enter this function
 			console.log("That is not a valid input.");
@@ -428,10 +428,10 @@ var startProcess = function() {
 	return new Promise(function (resolve, reject) {
 		fs.writeJson(__dirname + '/client_id.json', {client_id: id}, function(err) {
 			if (err) {
-				processExit("There was a problem writing the client id file." + chalk.yellow("\nThanks for using DownCloud!"));
+				exitProcess("There was a problem writing the client id file." + chalk.yellow("\nThanks for using DownCloud!"));
 			} else {
 				console.log(chalk.cyan("Client_id successfully added!"));
-				client_id = id;
+				client_key = id;
 				resolve();
 			}
 		});
@@ -459,6 +459,7 @@ var readFile = function() {
 		var json = require(__dirname + '/client_id.json');
 		if (json) {
 			if (json.client_id) {
+				client_key = json.client_id;
 				startProcess();
 			} else {
 				console.log(chalk.yellow("Looks like you need to enter a client id."));
@@ -476,5 +477,6 @@ var readFile = function() {
 		exitProcess(chalk.yellow("Thanks for using DownCloud!"));	
 	}
 }
+// );
 
 module.exports.start = readFile;

@@ -82,7 +82,7 @@ var chooseSearchResultInput = function(users, hasMoreThan10) {
 		} else if (!isNaN(data) && data.indexOf('.') < 0 && parseInt(data, 10) < 10) {
 			// Choose an artist, and go into the artist part
 			drawLine();
-			artistSearch(users[parseInt(data, 10)]);
+			artistSearchRequest(users[parseInt(data, 10)]);
 		} else {
 			// Invalid input, re-enter this function
 			console.log("That is not a valid input.");
