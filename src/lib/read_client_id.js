@@ -51,6 +51,16 @@ var readFile = function() {
 		exitProcess(chalk.yellow("Thanks for using DownCloud!"));	
 	}
 }
-// );
 
-module.exports.start = readFile;
+var getArguments = function() {
+	if (process.argv.length > 2) {
+		writeClientIdToFile(process.argv[2]).then(function() {
+			startProcess();
+		});
+	} else {
+		readFile();
+	}
+
+}
+
+module.exports.start = getArguments;
