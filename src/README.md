@@ -14,8 +14,8 @@ Download people's SoundCloud playlists via the terminal
 
 1. `npm install downcloud`
 2. `downcloud` [SoundCloud Client (optional)]
-	* _Note:_ You can either enter your SoundCloud Client ID as an argument, or enter it later within DownCloud's menus
-	* _Note:_ You will only need to enter a SoundCloud Client ID once
+	* __Note:__  You can either enter your SoundCloud Client ID as an argument, or enter it later within DownCloud's menus
+	* __Note:__  You will only need to enter a SoundCloud Client ID once
 3. You will need to enter a SoundCloud Client ID (which is free). Steps described below
 
 <h3>How to get a client ID</h3>
@@ -52,10 +52,10 @@ Email any __complaints/request/hatemail__ to `kmannix [at] bu.edu`
 * ~~Cool Title Screen (the most fun part)~~
 * ~~Add better percentage screens for downloading songs~~
 * ~~Add timeouts to requests~~
-* // RELEASE v1.0 //
 * ~~Add configs from terminal for client key, rather than manual input~~
 * ~~Update npm README~~
 * ~~Update Github README~~
-* Can add client_key in arguments
+* ~~Can add client_key in arguments~~
+* Redirect to client key input if it is wrong
 
 http://www.anupshinde.com/posts/how-to-create-nodejs-npm-package/
